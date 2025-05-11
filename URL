@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>URL Shortener Demo</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 30px;
+      background-color: #f7f7f7;
+    }
+    h1 {
+      color: #333;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+    table {
+      margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    a {
+      color: blue;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>URL Shortener Demo</h1>
+  <input type="text" id="longUrl" placeholder="Enter a long URL" size="40" />
+  <button onclick="shortenUrl()">Shorten</button>
+
+  <table id="urlTable">
+    <tr>
+      <th>Short URL</th>
+      <th>Original URL</th>
+      <th>Clicks</th>
+    </tr>
+  </table>
+
+  <script>
+    let counter = 1;
+    const stats = {};
+
+    function shortenUrl() {
+      const longUrl = document.getElementById('longUrl').value;
+      if (!longUrl) {
+        alert("Please enter a URL.");
+        return;
+      }
+
+      const shortUrl = 'https://short.ly/' + Math.random().toString(36).substring(2, 7);
+
+      stats[shortUrl] = { original: longUrl, clicks: 0 };
+
+      const table = document.getElementById('urlTable');
+      const row = table.insertRow();
+      const shortCell = row.insertCell(0);
+      const longCell = row.insertCell(1);
+      const clickCell = row.insertCell(2);
+
+      shortCell.innerHTML = `<a href="#" onclick="trackClick('${shortUrl}')">${shortUrl}</a>`;
+      longCell.textContent = longUrl;
+      clickCell.textContent = "0";
+
+      document.getElementById('longUrl').value = "";
+    }
+
+    function trackClick(shortUrl) {
+      stats[shortUrl].clicks++;
+      const table = document.getElementById('urlTable');
+      for (let i = 1; i < table.rows.length; i++) {
+        if (table.rows[i].cells[0].innerText === shortUrl) {
+          table.rows[i].cells[2].innerText = stats[shortUrl].clicks;
+        }
+      }
+      alert(`Redirecting to: ${stats[shortUrl].original}`);
+      window.open(stats[shortUrl].original, '_blank');
+    }
+  </script>
+</body>
+</html>
